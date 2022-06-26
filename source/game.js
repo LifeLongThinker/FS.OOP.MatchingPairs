@@ -21,6 +21,11 @@ class DOMHelper
         this.element.classList.add(className);
         return this;
     }
+    withTextContent(text)
+    {
+        this.element.textContent = text;
+        return this;
+    }
     get()
     {
         return this.element;
@@ -56,49 +61,55 @@ class PictoDictionary
 }
 class GameBoard
 {
-    constructor(gameBoardElement, size = 4)
+    constructor(gameBoardElement, alert, size = 4)
     {
         this.element = gameBoardElement;
+        this.alert = alert;
         this.tiles = Array.from({ length: size * size }, () => new Tile(this));
     }
-    
-    start()
+
+    assignPictosToTiles()
     {
         let pictos = PictoDictionary.pickRandomSet(this.tiles.length / 2);
-        let doubledPictos = pictos.concat(pictos.slice()).sort((a, b) => 0.5 - Math.random());
+        let doubledPictos = pictos.concat(pictos.slice()).sort(() => 0.5 - Math.random());
 
         for(let i = 0; i < doubledPictos.length; i++)
         {
             this.tiles[i].char = doubledPictos[i];
         }
     }
-    checkForMatches()
+    checkForMatch()
     {
-        let selectedTiles = this.tiles.filter((t) => t.isSelected && !t.isMatched && !t.isFailedMatch);
-        console.log('selectedTiles', selectedTiles);
-
+        let selectedTiles = this.tiles.filter(
+            (t) => t.isSelected && !t.isMatched && !t.isFailedMatch
+        );
+        
         if(selectedTiles.length == 1)
         {
-            // remove failed matched
-            this.tiles.filter((t) => t.isFailedMatch).forEach((t) => t.clearState());
+            this.removeFailedMatches();
         }
         else if(selectedTiles.length == 2)
         {
-            if(selectedTiles[0].char == selectedTiles[1].char)
-            {
-                console.log("MATCH!");
-                selectedTiles[0].setMatched();
-                selectedTiles[1].setMatched();
-            }
-            else
-            {
-                selectedTiles[0].setFailedMatch();
-                selectedTiles[1].setFailedMatch();
-            }
+            this.evaluateSelectedPairForMatch();
         }
-        else if(selectedTiles.length == 3)
+    }
+    removeFailedMatches()
+    {
+        this.tiles.filter((t) => t.isFailedMatch).forEach((t) => t.clearState());
+    }
+    evaluateSelectedPairForMatch()
+    {
+        if(selectedTiles[0].char == selectedTiles[1].char)
         {
-
+            selectedTiles[0].setMatched();
+            selectedTiles[1].setMatched();
+            this.alert.show("Match!");
+        }
+        else
+        {
+            selectedTiles[0].setFailedMatch();
+            selectedTiles[1].setFailedMatch();
+            this.alert.show("No Match!");
         }
     }
 }
@@ -154,7 +165,7 @@ class Tile
         }
 
         this.setSelected();
-        this.board.checkForMatches();
+        this.board.checkForMatch();
     }
 
     clearState()
@@ -193,7 +204,49 @@ class Tile
         }
     }
 }
+class Alert
+{
+    constructor(alertElement)
+    {
+        this.element = alertElement;
+    }
 
+    show(message, removeAfterMs = 2000)
+    {
+        const messageElement = this.createNewMessageElement(message);
+        this.queueMessageElementForRemoval(messageElement, removeAfterMs);
+    }
+
+    createNewMessageElement(message)
+    {
+        return DOMHelper.createElement("div")
+        .withClass('message')
+        .withTextContent(message)
+        .inside(this.element)
+        .get();
+    }
+    queueMessageElementForRemoval(messageElement, removeAfterMs)
+    {
+        setTimeout(() => {
+            messageElement.remove();
+        }, removeAfterMs);
+    }
+}
+class Game
+{
+    constructor(gameBoardElement, alertElement)
+    {
+        this.alert = new Alert(alertElement);
+        this.board = new GameBoard(gameBoardElement, this.alert);
+    }
+
+    startNewGame()
+    {
+        this.board.assignPictosToTiles();
+    }
+}
+
+const alertElement = document.getElementById("alert");
 const gameBoardElement = document.getElementById("board");
-const gameBoard = new GameBoard(gameBoardElement);
-gameBoard.start();
+const game = new Game(gameBoardElement, alertElement);
+game.startNewGame();
