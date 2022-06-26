@@ -1,0 +1,45 @@
+html
+{
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after
+{
+    box-sizing: inherit;
+}
+
+#board
+{
+    width: 20rem;
+    height: 20rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+#board .tile
+{
+    width: calc(5rem -.2rem -2px);
+    height: calc(5rem -.2rem -2px);
+    content: '';
+    border: 2px solid #cdcdcd;
+    margin: .1rem;
+    text-align: center;
+    font-size: 3rem;
+    line-height: calc(5rem -.2rem -2px);
+    color: transparent;
+    cursor: pointer;
+}
+
+#board .tile:not(.selected):hover
+{
+    background-color: #cdcdcd;
+}
+
+#board .tile.selected,
+#board .tile.matched
+{
+    color: inherit;
+}
