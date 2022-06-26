@@ -7,7 +7,7 @@ We are going to build a "Matching Pairs" game. You can see the game in action he
 ![The Matching Pairs game in action](./game_in_action.gif)
 
 
-## Step 1: Analysing the Problem Domain: Components
+## Step 1: Analyzing the Problem Domain: Components
 
 First, we will analyze the problem domain.
 
