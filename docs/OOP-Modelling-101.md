@@ -6,6 +6,7 @@ We are going to build a "Matching Pairs" game. You can see the game in action he
 
 ![The Matching Pairs game in action](./game_in_action.gif)
 
+Obviously, to keep this example simple, we will make compromises and not follow all SOLID and general best practices. The goal here is to give you a rough idea of what modelling solutions through OOP looks like.
 
 ## Step 1: Analyzing the Problem Domain: Components
 
