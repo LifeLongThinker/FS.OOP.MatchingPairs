@@ -48,7 +48,6 @@ class PictoDictionary
 
         return selectedPictos;
     }
-
     static parsePictosStringIntoArray()
     {
         return PictoDictionary.PICTOS.split("|");
@@ -126,8 +125,8 @@ class Tile
 
     constructor(gameBoard)
     {
-        this.board = gameBoard;
         this.element = this.createAndInjectTileElement(gameBoard.element);
+        this.gameBoard = gameBoard;
     }
     createAndInjectTileElement(gameBoardElement)
     {
@@ -170,7 +169,7 @@ class Tile
         }
 
         this.setSelected();
-        this.board.checkForMatch();
+        this.gameBoard.checkForMatch();
     }
 
     clearState()
@@ -219,7 +218,7 @@ class AlertBox
         this.element = alertBoxElement;
     }
 
-    show(message, removeAfterMs = 60000)
+    show(message, removeAfterMs = 2000)
     {
         const messageElement = this.createNewMessageElement(message);
         this.queueMessageElementForRemoval(messageElement, removeAfterMs);
