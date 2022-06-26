@@ -38,6 +38,19 @@ html
     background-color: #cdcdcd;
 }
 
+#board .tile.selected
+{
+    background-color: gray;
+}
+#board .tile.selected.failed
+{
+    background-color: red;
+}
+#board .tile.selected.matched
+{
+    background-color: green;
+}
+
 #board .tile.selected,
 #board .tile.matched
 {

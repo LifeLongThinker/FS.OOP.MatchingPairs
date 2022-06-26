@@ -61,21 +61,22 @@ class PictoDictionary
 }
 class GameBoard
 {
-    constructor(gameBoardElement, alert, size = 4)
+    constructor(gameBoardElement, alertBox, size = 4)
     {
         this.element = gameBoardElement;
-        this.alert = alert;
+        this.alertBox = alertBox;
         this.tiles = Array.from({ length: size * size }, () => new Tile(this));
     }
-
+    
     assignPictosToTiles()
     {
-        let pictos = PictoDictionary.pickRandomSet(this.tiles.length / 2);
-        let doubledPictos = pictos.concat(pictos.slice()).sort(() => 0.5 - Math.random());
+        const pictos = PictoDictionary.pickRandomSet(this.tiles.length / 2);
+        const doubledPictos = pictos.concat(pictos.slice());
+        const shuffledPictos = doubledPictos.sort(() => 0.5 - Math.random());
 
-        for(let i = 0; i < doubledPictos.length; i++)
+        for(let i = 0; i < shuffledPictos.length; i++)
         {
-            this.tiles[i].char = doubledPictos[i];
+            this.tiles[i].picto = shuffledPictos[i];
         }
     }
     checkForMatch()
@@ -86,30 +87,34 @@ class GameBoard
         
         if(selectedTiles.length == 1)
         {
-            this.removeFailedMatches();
+            // when only one tile is selected, clear previously failed match pair
+            this.clearFailedMatches();
         }
         else if(selectedTiles.length == 2)
         {
-            this.evaluateSelectedPairForMatch();
+            // when two tiles are selected, check for match
+            this.checkSelectedPairForMatchOrFail(selectedTiles);
         }
     }
-    removeFailedMatches()
+    clearFailedMatches()
     {
-        this.tiles.filter((t) => t.isFailedMatch).forEach((t) => t.clearState());
+        this.tiles
+            .filter((t) => t.isFailedMatch)
+            .forEach((t) => t.clearState());
     }
-    evaluateSelectedPairForMatch()
+    checkSelectedPairForMatchOrFail(selectedTilesPair)
     {
-        if(selectedTiles[0].char == selectedTiles[1].char)
+        if(selectedTilesPair[0].picto == selectedTilesPair[1].picto)
         {
-            selectedTiles[0].setMatched();
-            selectedTiles[1].setMatched();
-            this.alert.show("Match!");
+            selectedTilesPair[0].setMatched();
+            selectedTilesPair[1].setMatched();
+            this.alertBox.show("Match found!");
         }
         else
         {
-            selectedTiles[0].setFailedMatch();
-            selectedTiles[1].setFailedMatch();
-            this.alert.show("No Match!");
+            selectedTilesPair[0].setFailedMatch();
+            selectedTilesPair[1].setFailedMatch();
+            this.alertBox.show("Match failed!");
         }
     }
 }
@@ -135,11 +140,11 @@ class Tile
         return element;
     }
 
-    get char()
+    get picto()
     {
         return this.element.textContent;
     }
-    set char(value)
+    set picto(value)
     {
         this.element.textContent = value;
     }
@@ -156,7 +161,7 @@ class Tile
         return this.hasClassState(Tile.CLASS_FAILED_MATCH);
     }
 
-    onClick(e)
+    onClick()
     {
         // ignore if already selected
         if(this.isSelected)
@@ -170,7 +175,10 @@ class Tile
 
     clearState()
     {
-        this.removeClassStates(Tile.CLASS_SELECTED, Tile.CLASS_MATCHED, Tile.CLASS_FAILED_MATCH);
+        this.removeClassStates(
+            Tile.CLASS_SELECTED,
+            Tile.CLASS_MATCHED,
+            Tile.CLASS_FAILED_MATCH);
     }
     setSelected()
     {
@@ -204,14 +212,14 @@ class Tile
         }
     }
 }
-class Alert
+class AlertBox
 {
-    constructor(alertElement)
+    constructor(alertBoxElement)
     {
-        this.element = alertElement;
+        this.element = alertBoxElement;
     }
 
-    show(message, removeAfterMs = 2000)
+    show(message, removeAfterMs = 60000)
     {
         const messageElement = this.createNewMessageElement(message);
         this.queueMessageElementForRemoval(messageElement, removeAfterMs);
@@ -220,10 +228,10 @@ class Alert
     createNewMessageElement(message)
     {
         return DOMHelper.createElement("div")
-        .withClass('message')
-        .withTextContent(message)
-        .inside(this.element)
-        .get();
+            .withClass('message')
+            .withTextContent(message)
+            .inside(this.element)
+            .get();
     }
     queueMessageElementForRemoval(messageElement, removeAfterMs)
     {
@@ -234,19 +242,20 @@ class Alert
 }
 class Game
 {
-    constructor(gameBoardElement, alertElement)
+    constructor(gameBoardElement, alertBoxElement)
     {
-        this.alert = new Alert(alertElement);
-        this.board = new GameBoard(gameBoardElement, this.alert);
+        this.alertBox = new AlertBox(alertBoxElement);
+        this.gameBoard = new GameBoard(gameBoardElement, this.alertBox);
     }
 
     startNewGame()
     {
-        this.board.assignPictosToTiles();
+        this.gameBoard.assignPictosToTiles();
     }
 }
 
-const alertElement = document.getElementById("alert");
+const alertBoxElement = document.getElementById("alert");
 const gameBoardElement = document.getElementById("board");
-const game = new Game(gameBoardElement, alertElement);
+
+const game = new Game(gameBoardElement, alertBoxElement);
 game.startNewGame();
