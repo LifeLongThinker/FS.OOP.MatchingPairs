@@ -1,4 +1,4 @@
-# Short into to OOP Modelling and Development using Vanilla JS
+# Short Intro to OOP Modelling and Development Using Vanilla JS
 
 Following up on my last [tweet on OOP design and development](https://twitter.com/LifeLongThinker/status/1538193675099979786), we are going to build a very tiny example web app using only vanilla JS.
 
@@ -12,14 +12,14 @@ Obviously, to keep this example simple, we will make compromises and not follow 
 
 First, we will analyze the problem domain.
 
-Remember that OOP is all about "building larger parts from smaller parts and their communication among each other". To design the game, we go backwards: How is the overall problem composed of smaller problems.
+Remember that OOP is all about "building larger parts from smaller parts and their communication among each other". To design the game, we go backwards: How is the overall problem composed of smaller problems?
 
-What smaller parts are involved here? Let's drill the game design down into ist (visible) components:
+What smaller parts are involved here? Let's drill the game design down into its (visible) components:
 
 ![The Game is made up of separate components](./components_drill_down.png)
 
 
-## Step 2: Analysing the Problem Domain II: Responsibilities
+## Step 2: Analyzing the Problem Domain II: Responsibilities
 
 Now that we have figured out the components involved, lets see what kind of responsibilities they have:
 
@@ -34,13 +34,13 @@ Now let's extract classes from our components. We can start by mapping one compo
 
 ## Step 3.1: Modelling the 'Tile' Class
 
-The Tile class is one of the most complex classes. Its constructor injects ints DOM element into the gameboard element (line 7 ff.). Then it manages its assigned pictogram and state inside the dom. Finally, it listens for click interaction.
+The Tile class is one of the most complex classes. Its constructor injects its DOM element into the gameboard element (line 7 ff.). Then it manages its assigned pictogram and state inside the dom. Finally, it listens for click interaction (lines ).
 
 ![The Tile class](./class_tile.png)
 
 ## Step 3.2: Modelling the 'GameBoard' Class
 
-The GameBoard class manages tiles. These are created and injected dynamically inside its constructor (lines 3 ff.). The PictoDirecitony (line 12) is a separate class that handles pictogram logic.
+The GameBoard class manages tiles. These are created and injected dynamically inside its constructor (lines 3 ff.). The PictoDictionary (line 12) is a separate class that handles pictogram logic.
 
  The GameBoard's main responsibility is checking for matches when the user selects tiles (lines 21 ff.).
 
@@ -49,7 +49,7 @@ The GameBoard class manages tiles. These are created and injected dynamically in
 
 ## Step 3.3: Modelling the 'PictoDictionary' class
 
-The P. is a component that exists only in our Solution Domain. It is a helper function handling pictogram logic, such as selected a random subset of all available pictograms for display.
+The P. is a component that exists only in our Solution Domain. It is a helper function handling pictogram logic, such as selecting a random subset of all available pictograms for display.
 
 ![The PictoDictionary class](./class_pictosDictionary.png)
 
