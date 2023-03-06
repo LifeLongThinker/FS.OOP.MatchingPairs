@@ -38,7 +38,7 @@ class PictoDictionary
     static pickRandomSet(count)
     {
         const pictos = PictoDictionary.parsePictosStringIntoArray();
-        var selectedPictos = [];
+        const selectedPictos = [];
 
         for(let i = 0; i < count; i++)
         {
